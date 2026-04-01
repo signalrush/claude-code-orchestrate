@@ -11,3 +11,8 @@ license = "MIT"
 
 [project.urls]
 Repository = "https://github.com/tianhaowu/claude-code-orchestrate"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that require a live claude mcp serve instance",
+]
