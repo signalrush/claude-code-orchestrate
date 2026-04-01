@@ -1,4 +1,5 @@
 import atexit
+import json
 from claude_code_orchestrate.mcp_transport import MCPTransport
 
 _transport: MCPTransport | None = None
@@ -13,9 +14,53 @@ def _get_transport() -> MCPTransport:
     return _transport
 
 
-def _call(tool_name: str, **kwargs) -> str:
+def _parse(tool_name: str, raw: str) -> "str | list[str]":
+    """Parse raw MCP JSON response into native Python types."""
+    try:
+        data = json.loads(raw)
+    except (json.JSONDecodeError, TypeError):
+        return raw
+
+    if tool_name == "Read":
+        if isinstance(data, dict) and "file" in data:
+            return data["file"].get("content", raw)
+        return raw
+
+    elif tool_name == "Write":
+        if isinstance(data, dict) and "filePath" in data:
+            return data["filePath"]
+        return raw
+
+    elif tool_name == "Edit":
+        if isinstance(data, dict) and "structuredPatch" in data:
+            lines = []
+            for patch in data.get("structuredPatch", []):
+                lines.extend(patch.get("lines", []))
+            return "\n".join(lines) if lines else raw
+        return raw
+
+    elif tool_name == "Glob":
+        if isinstance(data, dict) and "filenames" in data:
+            return data["filenames"]
+        return raw
+
+    elif tool_name == "Grep":
+        if isinstance(data, dict) and "filenames" in data:
+            return data["filenames"]
+        return raw
+
+    elif tool_name == "Bash":
+        if isinstance(data, dict) and "stdout" in data:
+            return data["stdout"]
+        return raw
+
+    return raw
+
+
+def _call(tool_name: str, **kwargs) -> "str | list[str]":
     args = {k: v for k, v in kwargs.items() if v is not None}
-    return _get_transport().call_tool(tool_name, args)
+    raw = _get_transport().call_tool(tool_name, args)
+    return _parse(tool_name, raw)
 
 
 # --- File Tools ---

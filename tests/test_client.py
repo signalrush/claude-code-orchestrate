@@ -52,3 +52,52 @@ def test_bash_with_timeout():
             "command": "echo hello",
             "timeout": 5000,
         })
+
+
+def test_read_returns_file_content():
+    transport = _mock_transport()
+    transport.call_tool = MagicMock(return_value='{"type":"text","file":{"filePath":"/tmp/test.py","content":"print(hello)"}}')
+    with patch.object(client_mod, "_transport", transport):
+        result = client_mod.Read(file_path="/tmp/test.py")
+        assert result == "print(hello)"
+
+
+def test_glob_returns_list():
+    transport = _mock_transport()
+    transport.call_tool = MagicMock(return_value='{"filenames":["/a.py","/b.py"],"numFiles":2}')
+    with patch.object(client_mod, "_transport", transport):
+        result = client_mod.Glob(pattern="*.py")
+        assert result == ["/a.py", "/b.py"]
+
+
+def test_bash_returns_stdout():
+    transport = _mock_transport()
+    transport.call_tool = MagicMock(return_value='{"stdout":"hello world","stderr":"","interrupted":false}')
+    with patch.object(client_mod, "_transport", transport):
+        result = client_mod.Bash(command="echo hello world")
+        assert result == "hello world"
+
+
+def test_grep_returns_filenames():
+    transport = _mock_transport()
+    transport.call_tool = MagicMock(return_value='{"mode":"files_with_matches","filenames":["/a.py"],"numFiles":1}')
+    with patch.object(client_mod, "_transport", transport):
+        result = client_mod.Grep(pattern="TODO")
+        assert result == ["/a.py"]
+
+
+def test_write_returns_filepath():
+    transport = _mock_transport()
+    transport.call_tool = MagicMock(return_value='{"type":"create","filePath":"/tmp/new.txt","content":"hi"}')
+    with patch.object(client_mod, "_transport", transport):
+        result = client_mod.Write(file_path="/tmp/new.txt", content="hi")
+        assert result == "/tmp/new.txt"
+
+
+def test_edit_returns_diff():
+    transport = _mock_transport()
+    transport.call_tool = MagicMock(return_value='{"structuredPatch":[{"lines":["-old","+new"]}]}')
+    with patch.object(client_mod, "_transport", transport):
+        result = client_mod.Edit(file_path="/tmp/f.txt", old_string="old", new_string="new")
+        assert "-old" in result
+        assert "+new" in result

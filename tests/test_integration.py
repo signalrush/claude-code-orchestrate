@@ -24,6 +24,7 @@ def test_read_write_roundtrip(tmp_dir):
     test_file = os.path.join(tmp_dir, "test.txt")
     Write(file_path=test_file, content="hello world")
     result = Read(file_path=test_file)
+    assert isinstance(result, str)
     assert "hello world" in result
 
 
@@ -33,15 +34,16 @@ def test_glob_finds_files(tmp_dir):
     Write(file_path=os.path.join(tmp_dir, "a.py"), content="# a")
     Write(file_path=os.path.join(tmp_dir, "b.py"), content="# b")
     result = Glob(pattern="*.py", path=tmp_dir)
-    assert "a.py" in result
-    assert "b.py" in result
+    assert isinstance(result, list)
+    assert any("a.py" in f for f in result)
+    assert any("b.py" in f for f in result)
 
 
 def test_bash_runs_command():
     from claude_code_orchestrate import Bash
 
     result = Bash(command="echo hello_from_sdk")
-    assert "hello_from_sdk" in result
+    assert result == "hello_from_sdk\n" or result == "hello_from_sdk"
 
 
 def test_grep_finds_pattern(tmp_dir):
@@ -49,7 +51,8 @@ def test_grep_finds_pattern(tmp_dir):
 
     Write(file_path=os.path.join(tmp_dir, "search.txt"), content="find_this_needle in haystack")
     result = Grep(pattern="find_this_needle", path=tmp_dir)
-    assert "find_this_needle" in result or "search.txt" in result
+    assert isinstance(result, list)
+    assert any("search.txt" in f for f in result)
 
 
 def test_edit_replaces_string(tmp_dir):
@@ -59,5 +62,6 @@ def test_edit_replaces_string(tmp_dir):
     Write(file_path=test_file, content="old_value here")
     Edit(file_path=test_file, old_string="old_value", new_string="new_value")
     result = Read(file_path=test_file)
+    assert isinstance(result, str)
     assert "new_value" in result
     assert "old_value" not in result
