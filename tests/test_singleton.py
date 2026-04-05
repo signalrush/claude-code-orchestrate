@@ -2,8 +2,8 @@
 import threading
 from unittest.mock import patch, MagicMock
 
-import claude_code_orchestrate.client as client_mod
-from claude_code_orchestrate.mcp_transport import MCPTransport, ClaudeCodeError
+import super_orchestrate.client as client_mod
+from super_orchestrate.mcp_transport import MCPTransport, ClaudeCodeError
 
 
 def setup_function():
@@ -29,7 +29,7 @@ def test_partial_init_recovery():
         def stop(self):
             pass
 
-    with patch("claude_code_orchestrate.client.MCPTransport", FlakyTransport):
+    with patch("super_orchestrate.client.MCPTransport", FlakyTransport):
         # First call fails
         try:
             client_mod._get_transport()
@@ -44,7 +44,7 @@ def test_partial_init_recovery():
 
 def test_singleton_returns_same_instance():
     mock_transport = MagicMock(spec=MCPTransport)
-    with patch("claude_code_orchestrate.client.MCPTransport", return_value=mock_transport):
+    with patch("super_orchestrate.client.MCPTransport", return_value=mock_transport):
         client_mod._transport = None
         t1 = client_mod._get_transport()
         t2 = client_mod._get_transport()
@@ -71,7 +71,7 @@ def test_singleton_thread_safe():
         def stop(self):
             pass
 
-    with patch("claude_code_orchestrate.client.MCPTransport", CountingTransport):
+    with patch("super_orchestrate.client.MCPTransport", CountingTransport):
         client_mod._transport = None
         threads = [threading.Thread(target=client_mod._get_transport) for _ in range(20)]
         for t in threads:

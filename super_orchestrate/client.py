@@ -28,7 +28,6 @@ def _load_agent_definitions() -> dict[str, AgentDefinition]:
         # Strip BOM if present (common on Windows)
         if text.startswith("\ufeff"):
             text = text[1:]
-        # Parse YAML frontmatter
         if not text.startswith("---"):
             continue
         parts = text.split("---", 2)
@@ -37,7 +36,6 @@ def _load_agent_definitions() -> dict[str, AgentDefinition]:
         frontmatter = parts[1].strip()
         body = parts[2].strip()
 
-        # Parse frontmatter fields
         meta = {}
         list_key = None
         list_items = []
@@ -107,27 +105,29 @@ def _get_transport() -> MCPTransport:
         return _transport
 
 
+_EXTRACTORS = {
+    "Read": lambda d: d.get("file", {}).get("content") if isinstance(d.get("file"), dict) else None,
+    "Write": lambda d: d.get("filePath"),
+    "Glob": lambda d: d.get("filenames"),
+    "Bash": lambda d: d.get("stdout"),
+}
+
+
 def _parse(tool_name: str, raw: str) -> "str | list[str]":
     """Parse raw MCP JSON response into native Python types."""
     try:
         data = json.loads(raw)
     except (json.JSONDecodeError, TypeError):
         return raw
-
-    if tool_name == "Read":
-        if isinstance(data, dict) and isinstance(data.get("file"), dict):
-            val = data["file"].get("content")
-            return val if val is not None else raw
+    if not isinstance(data, dict):
         return raw
 
-    elif tool_name == "Write":
-        if isinstance(data, dict) and "filePath" in data:
-            val = data["filePath"]
-            return val if val is not None else raw
-        return raw
+    if tool_name in _EXTRACTORS:
+        val = _EXTRACTORS[tool_name](data)
+        return val if val is not None else raw
 
-    elif tool_name == "Edit":
-        if isinstance(data, dict) and isinstance(data.get("structuredPatch"), list):
+    if tool_name == "Edit":
+        if isinstance(data.get("structuredPatch"), list):
             lines = []
             for patch in data["structuredPatch"]:
                 if isinstance(patch, dict):
@@ -137,23 +137,10 @@ def _parse(tool_name: str, raw: str) -> "str | list[str]":
             return "\n".join(lines) if lines else raw
         return raw
 
-    elif tool_name == "Glob":
-        if isinstance(data, dict) and "filenames" in data:
-            val = data["filenames"]
-            return val if val is not None else raw
-        return raw
-
-    elif tool_name == "Grep":
-        if isinstance(data, dict):
-            for key in ("filenames", "content", "counts"):
-                if key in data and data[key] is not None:
-                    return data[key]
-        return raw
-
-    elif tool_name == "Bash":
-        if isinstance(data, dict) and "stdout" in data:
-            val = data["stdout"]
-            return val if val is not None else raw
+    if tool_name == "Grep":
+        for key in ("filenames", "content", "counts"):
+            if key in data and data[key] is not None:
+                return data[key]
         return raw
 
     return raw
@@ -196,9 +183,7 @@ def Grep(pattern: str, path: str = None, glob: str = None, output_mode: str = No
         "-i": case_insensitive, "-A": after_context,
         "-B": before_context, "-C": context_alias, "-n": line_numbers,
     }
-    args = {k: v for k, v in kwargs.items() if v is not None}
-    raw = _get_transport().call_tool("Grep", args)
-    return _parse("Grep", raw)
+    return _call("Grep", **kwargs)
 
 
 # --- Execution ---
@@ -210,8 +195,7 @@ def Bash(command: str, timeout: int = None, description: str = None) -> str:
 # --- Agent Orchestration ---
 
 def Agent(description: str, prompt: str, subagent_type: str = None, model: str = None,
-          run_in_background: bool = None, name: str = None, team_name: str = None,
-          mode: str = None, isolation: str = None) -> str:
+          name: str = None) -> str:
     """Spawn a sub-agent using claude-agent-sdk."""
     agents = _get_agent_definitions()
 

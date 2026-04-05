@@ -4,7 +4,7 @@ import subprocess
 import threading
 from unittest.mock import patch, MagicMock
 
-from claude_code_orchestrate.mcp_transport import MCPTransport, ClaudeCodeError
+from super_orchestrate.mcp_transport import MCPTransport, ClaudeCodeError
 
 
 # --- Error handling ---

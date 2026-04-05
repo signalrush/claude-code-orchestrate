@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-import claude_code_orchestrate.client as client_mod
+import super_orchestrate.client as client_mod
 
 
 def _write_agent(agents_dir, filename, content):

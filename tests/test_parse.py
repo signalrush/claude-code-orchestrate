@@ -1,7 +1,7 @@
 """Tests for the _parse function — response parsing for all tool types."""
 import json
 import pytest
-from claude_code_orchestrate.client import _parse
+from super_orchestrate.client import _parse
 
 
 # --- Read ---

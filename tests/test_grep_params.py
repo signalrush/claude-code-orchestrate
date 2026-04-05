@@ -1,7 +1,7 @@
 """Tests for Grep hyphenated parameter mapping (-i, -A, -B, -C, -n)."""
 from unittest.mock import patch, MagicMock
 
-import claude_code_orchestrate.client as client_mod
+import super_orchestrate.client as client_mod
 
 
 def _mock_transport():
