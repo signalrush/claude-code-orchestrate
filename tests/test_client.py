@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-import claude_code_orchestrate.client as client_mod
+import super_orchestrate.client as client_mod
 
 
 def _mock_transport():
@@ -16,7 +16,7 @@ def setup_function():
 def test_read_calls_transport_with_correct_args():
     transport = _mock_transport()
     with patch.object(client_mod, "_transport", transport):
-        from claude_code_orchestrate.client import Read
+        from super_orchestrate.client import Read
         result = Read(file_path="/tmp/test.py")
         transport.call_tool.assert_called_once_with("Read", {"file_path": "/tmp/test.py"})
         assert result == "mock result"
@@ -25,7 +25,7 @@ def test_read_calls_transport_with_correct_args():
 def test_read_strips_none_optional_args():
     transport = _mock_transport()
     with patch.object(client_mod, "_transport", transport):
-        from claude_code_orchestrate.client import Read
+        from super_orchestrate.client import Read
         Read(file_path="/tmp/test.py", offset=None, limit=10)
         transport.call_tool.assert_called_once_with("Read", {"file_path": "/tmp/test.py", "limit": 10})
 
@@ -40,8 +40,8 @@ def test_agent_passes_prompt_to_sdk():
 
     transport = _mock_transport()
     with patch.object(client_mod, "_transport", transport):
-        with patch("claude_code_orchestrate.client.query", side_effect=mock_query):
-            with patch("claude_code_orchestrate.client.ResultMessage", type(mock_result)):
+        with patch("super_orchestrate.client.query", side_effect=mock_query):
+            with patch("super_orchestrate.client.ResultMessage", type(mock_result)):
                 client_mod._agent_defs = {}
                 result = client_mod.Agent(
                     description="fix bugs", prompt="fix all bugs", model="sonnet"
@@ -54,7 +54,7 @@ def test_agent_passes_prompt_to_sdk():
 def test_bash_with_timeout():
     transport = _mock_transport()
     with patch.object(client_mod, "_transport", transport):
-        from claude_code_orchestrate.client import Bash
+        from super_orchestrate.client import Bash
         Bash(command="echo hello", timeout=5000)
         transport.call_tool.assert_called_once_with("Bash", {
             "command": "echo hello",
@@ -119,8 +119,8 @@ def test_agent_uses_sdk_not_mcp():
     async def mock_query(*args, **kwargs):
         yield mock_result
 
-    with patch("claude_code_orchestrate.client.query", side_effect=mock_query):
-        with patch("claude_code_orchestrate.client.ResultMessage", type(mock_result)):
+    with patch("super_orchestrate.client.query", side_effect=mock_query):
+        with patch("super_orchestrate.client.ResultMessage", type(mock_result)):
             # Reset cached agent defs so _get_agent_definitions() runs fresh
             client_mod._agent_defs = {}
             result = client_mod.Agent(description="test", prompt="say hello")

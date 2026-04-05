@@ -1,4 +1,4 @@
-# claude-code-orchestrate
+# super-orchestrate
 
 Python SDK that makes every Claude Code CLI tool callable as a Python function.
 
@@ -13,7 +13,7 @@ Requires `claude` CLI installed and on PATH.
 ## Usage
 
 ```python
-from claude_code_orchestrate import Read, Edit, Glob, Grep, Bash, Agent, SendMessage, CronCreate
+from super_orchestrate import Read, Edit, Glob, Grep, Bash, Agent, SendMessage, CronCreate
 
 # File operations
 content = Read(file_path="src/main.py")
@@ -64,7 +64,7 @@ Spawns `claude mcp serve` as a subprocess, communicates via JSON-RPC 2.0 over st
 Persistent, project-scoped context store backed by [OpenViking](https://github.com/volcengine/OpenViking). Requires `pip install openviking`.
 
 ```python
-from claude_code_orchestrate import Agent, Glob, Read, ctx
+from super_orchestrate import Agent, Glob, Read, ctx
 
 ctx.init("my-project")
 

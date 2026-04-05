@@ -2,10 +2,9 @@ import atexit
 import subprocess
 import time
 
-from openviking import AGFSClient
-from claude_code_orchestrate.mcp_transport import ClaudeCodeError
+from super_orchestrate.mcp_transport import ClaudeCodeError
 
-_client: AGFSClient | None = None
+_client = None
 _server_proc: subprocess.Popen | None = None
 _project: str | None = None
 
@@ -21,10 +20,15 @@ def _stop_server() -> None:
         _server_proc = None
 
 
-def _ensure_server() -> AGFSClient:
+def _ensure_server():
     global _client, _server_proc
     if _client is not None:
         return _client
+
+    try:
+        from openviking import AGFSClient
+    except ImportError:
+        raise ClaudeCodeError("ctx", "openviking is required: pip install openviking")
 
     client = AGFSClient("http://localhost:1933")
     try:

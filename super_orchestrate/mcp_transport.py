@@ -1,4 +1,4 @@
-# claude_code_orchestrate/mcp_transport.py
+# super_orchestrate/mcp_transport.py
 import json
 import subprocess
 import threading
@@ -32,7 +32,7 @@ class MCPTransport:
         init_result = self._send("initialize", {
             "protocolVersion": "2024-11-05",
             "capabilities": {},
-            "clientInfo": {"name": "claude-code-orchestrate", "version": "0.1.0"},
+            "clientInfo": {"name": "super-orchestrate", "version": "0.1.0"},
         })
         # Send initialized notification (no response expected)
         self._send_notification("notifications/initialized", {})

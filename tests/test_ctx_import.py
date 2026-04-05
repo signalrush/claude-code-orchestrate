@@ -1,5 +1,5 @@
 def test_ctx_importable():
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     assert hasattr(ctx, "init")
     assert hasattr(ctx, "put")
     assert hasattr(ctx, "get")
@@ -10,5 +10,5 @@ def test_ctx_importable():
 
 
 def test_ctx_in_all():
-    import claude_code_orchestrate
-    assert "ctx" in claude_code_orchestrate.__all__
+    import super_orchestrate
+    assert "ctx" in super_orchestrate.__all__

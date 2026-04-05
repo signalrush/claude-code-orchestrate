@@ -9,7 +9,7 @@ pytestmark = pytest.mark.integration
 
 def setup_function():
     """Reset context module state before each test."""
-    import claude_code_orchestrate.context as ctx_mod
+    import super_orchestrate.context as ctx_mod
     ctx_mod._client = None
     ctx_mod._server_proc = None
     ctx_mod._project = None
@@ -17,7 +17,7 @@ def setup_function():
 
 def teardown_function():
     """Clean up test project."""
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     try:
         ctx.rm("", recursive=True)
     except Exception:
@@ -25,7 +25,7 @@ def teardown_function():
 
 
 def test_put_get_roundtrip():
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     ctx.init("test-integration")
     ctx.put("greeting", "hello world")
     result = ctx.get("greeting")
@@ -33,7 +33,7 @@ def test_put_get_roundtrip():
 
 
 def test_put_hierarchical_and_ls():
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     ctx.init("test-integration")
     ctx.put("phase-1/findings", "found bugs")
     ctx.put("phase-1/decisions", "fix them")
@@ -43,7 +43,7 @@ def test_put_hierarchical_and_ls():
 
 
 def test_search_finds_content():
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     ctx.init("test-integration")
     ctx.put("notes", "the token refresh mechanism is broken")
     result = ctx.search("token refresh")
@@ -51,7 +51,7 @@ def test_search_finds_content():
 
 
 def test_rm_removes_key():
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     ctx.init("test-integration")
     ctx.put("temp", "temporary data")
     ctx.rm("temp")
@@ -63,7 +63,7 @@ def test_rm_removes_key():
 
 
 def test_rm_recursive():
-    from claude_code_orchestrate import ctx
+    from super_orchestrate import ctx
     ctx.init("test-integration")
     ctx.put("dir/a", "aaa")
     ctx.put("dir/b", "bbb")

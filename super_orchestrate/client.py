@@ -6,7 +6,7 @@ import os
 import threading
 from pathlib import Path
 
-from claude_code_orchestrate.mcp_transport import MCPTransport
+from super_orchestrate.mcp_transport import MCPTransport
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage, AgentDefinition
 
 _transport: MCPTransport | None = None

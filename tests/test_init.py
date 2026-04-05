@@ -1,5 +1,5 @@
 def test_all_tools_importable():
-    from claude_code_orchestrate import (
+    from super_orchestrate import (
         Read, Write, Edit, Glob, Grep,
         Bash,
         Agent, SendMessage, TaskOutput, TaskStop,
@@ -18,5 +18,5 @@ def test_all_tools_importable():
 
 
 def test_all_exports_listed():
-    import claude_code_orchestrate
-    assert len(claude_code_orchestrate.__all__) == 25
+    import super_orchestrate
+    assert len(super_orchestrate.__all__) == 25

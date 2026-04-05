@@ -3,14 +3,14 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "claude-code-orchestrate"
+name = "super-orchestrate"
 version = "0.1.0"
 description = "Python SDK for Claude Code CLI tools via MCP"
 requires-python = ">=3.10"
 license = "MIT"
 
 [project.urls]
-Repository = "https://github.com/tianhaowu/claude-code-orchestrate"
+Repository = "https://github.com/tianhaowu/super-orchestrate"
 
 [tool.pytest.ini_options]
 markers = [

@@ -1,4 +1,4 @@
-from claude_code_orchestrate.client import (
+from super_orchestrate.client import (
     Read, Write, Edit, Glob, Grep,
     Bash,
     Agent, SendMessage, TaskOutput, TaskStop,
@@ -9,8 +9,8 @@ from claude_code_orchestrate.client import (
     EnterWorktree, ExitWorktree,
     Skill, ToolSearch, NotebookEdit,
 )
-from claude_code_orchestrate.mcp_transport import ClaudeCodeError
-from claude_code_orchestrate import context as ctx
+from super_orchestrate.mcp_transport import ClaudeCodeError
+from super_orchestrate import context as ctx
 
 __all__ = [
     "Read", "Write", "Edit", "Glob", "Grep",

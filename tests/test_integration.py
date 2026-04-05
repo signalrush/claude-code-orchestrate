@@ -19,7 +19,7 @@ def tmp_dir():
 
 
 def test_read_write_roundtrip(tmp_dir):
-    from claude_code_orchestrate import Read, Write
+    from super_orchestrate import Read, Write
 
     test_file = os.path.join(tmp_dir, "test.txt")
     Write(file_path=test_file, content="hello world")
@@ -29,7 +29,7 @@ def test_read_write_roundtrip(tmp_dir):
 
 
 def test_glob_finds_files(tmp_dir):
-    from claude_code_orchestrate import Write, Glob
+    from super_orchestrate import Write, Glob
 
     Write(file_path=os.path.join(tmp_dir, "a.py"), content="# a")
     Write(file_path=os.path.join(tmp_dir, "b.py"), content="# b")
@@ -40,14 +40,14 @@ def test_glob_finds_files(tmp_dir):
 
 
 def test_bash_runs_command():
-    from claude_code_orchestrate import Bash
+    from super_orchestrate import Bash
 
     result = Bash(command="echo hello_from_sdk")
     assert result == "hello_from_sdk\n" or result == "hello_from_sdk"
 
 
 def test_grep_finds_pattern(tmp_dir):
-    from claude_code_orchestrate import Write, Grep
+    from super_orchestrate import Write, Grep
 
     Write(file_path=os.path.join(tmp_dir, "search.txt"), content="find_this_needle in haystack")
     result = Grep(pattern="find_this_needle", path=tmp_dir)
@@ -56,7 +56,7 @@ def test_grep_finds_pattern(tmp_dir):
 
 
 def test_edit_replaces_string(tmp_dir):
-    from claude_code_orchestrate import Write, Read, Edit
+    from super_orchestrate import Write, Read, Edit
 
     test_file = os.path.join(tmp_dir, "edit_me.txt")
     Write(file_path=test_file, content="old_value here")
