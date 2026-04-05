@@ -239,12 +239,16 @@ def Agent(description: str, prompt: str, subagent_type: str = None, model: str =
 
     async def _run():
         result_text = ""
+        # Strip Anthropic API key so the CLI uses OAuth instead
+        clean_env = os.environ.copy()
+        clean_env.pop("ANTHROPIC_API_KEY", None)
         opts = ClaudeAgentOptions(
             permission_mode="bypassPermissions",
             model=resolved_model,
             agents=agents or None,
             cwd=os.getcwd(),
             system_prompt=system_prompt_val,
+            env=clean_env,
         )
         if resolved_tools:
             opts.allowed_tools = resolved_tools
